@@ -1,13 +1,12 @@
 import { For } from "solid-js";
 import { createDroppable, Id, SortableProvider } from "@thisbeyond/solid-dnd";
-import { Champion } from "../../business/models";
 import ChampionCard from "../ChampionCard";
+import { getChampions } from "../../store";
 
-export type Props = {
-  champions: Champion[];
-};
+export type Props = {};
 
-export const AvailableChampions = ({ champions }: Props) => {
+export const AvailableChampions = () => {
+  const champions = getChampions();
   const droppable = createDroppable("main-champion-list");
   const ids = champions.map((champion) => champion.championId as Id);
 

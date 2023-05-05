@@ -9,31 +9,19 @@ import {
 import AvailableChampions from "./components/AvailableChampions";
 import ChampionPoolList from "./components/ChampionPoolList";
 
-import { userChampionPools, championList, buildChampion } from "./fake-data";
-import { createEffect, createSignal, For, onCleanup } from "solid-js";
-import { Champion, ChampionPool, Tier } from "./business/models";
-import { createStore, produce } from "solid-js/store";
-import ChampionCard from "./components/ChampionCard";
+import { Tier } from "./business/models";
+import { produce } from "solid-js/store";
+import { getTiers } from "./store";
 
 export const App = () => {
-  const [data, setData] = createStore<ChampionPool[]>(userChampionPools);
-  const [getIndex, setIndex] = createSignal(0);
-  const [containers, setContainers] = createStore<Record<string, Tier>>(
-    userChampionPools.reduce((result, userChampionPool) => {
+  const containers = getTiers().reduce<{ [key: string]: Tier }>(
+    (result, tier) => {
       return {
         ...result,
-        ...userChampionPool.tiers.reduce(
-          (result2, tier) => ({
-            ...result2,
-            [tier.id]: {
-              championPoolId: userChampionPool.id,
-              ...tier,
-            },
-          }),
-          {}
-        ),
+        [`${tier.championPoolId}-${tier.id}`]: tier,
       };
-    }, {})
+    },
+    {}
   );
 
   const containerIds = () => Object.keys(containers);
@@ -151,14 +139,14 @@ export const App = () => {
           return containers;
         });
       }
-    }*/
+      }*/
     }
   };
 
   const onDragOver = ({ draggable, droppable }: any) => {
-    // if (draggable && droppable) {
-    //   move(draggable, droppable);
-    // }
+    if (draggable && droppable) {
+      move(draggable, droppable);
+    }
   };
 
   const onDragEnd = ({ draggable, droppable }: any) => {
@@ -174,8 +162,8 @@ export const App = () => {
       collisionDetector={closestContainerOrItem}
     >
       <DragDropSensors>
-        <ChampionPoolList pools={data} />
-        <AvailableChampions champions={championList} />
+        <ChampionPoolList />
+        <AvailableChampions />
       </DragDropSensors>
     </DragDropProvider>
   );

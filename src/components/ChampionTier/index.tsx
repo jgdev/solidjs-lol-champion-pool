@@ -1,16 +1,28 @@
-import { For } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import { createDroppable, Id, SortableProvider } from "@thisbeyond/solid-dnd";
-import { Tier } from "../../business/models";
-import styles from "./styles.module.scss";
+import { Champion, Tier } from "../../business/models";
 import ChampionCard from "../ChampionCard";
+import { getChampions as getChampionsStore } from "../../store";
 
 export type Props = {
   tier: Tier;
 };
 
+const getChampionsFilteredByTier = (championList: Champion[], tierId: string) =>
+  championList.filter((champion) => champion.tierId === tierId);
+
 export const ChampionTier = ({ tier }: Props) => {
+  const [getChampions, setChampions] = createSignal<Champion[]>([], {
+    equals: false,
+  });
   const droppable = createDroppable(tier.id);
-  const ids = tier.champions.map((champion) => champion.championId as Id);
+  const ids = getChampions().map((champion) => champion.championId as Id);
+
+  createEffect(() => {
+    setChampions(getChampionsFilteredByTier(getChampionsStore(), tier.id));
+    console.log("here", getChampions());
+  });
+
   return (
     <div
       class="flex items-center gap-2 p-2"
@@ -18,8 +30,9 @@ export const ChampionTier = ({ tier }: Props) => {
     >
       <SortableProvider ids={ids}>
         <div class="basis-1/6">{tier.name}</div>
-        <For each={tier.champions}>
-          {(champion) => <ChampionCard class="" champion={champion} />}
+        {!getChampions().length && <ChampionCard />}
+        <For each={getChampions()}>
+          {(champion) => <ChampionCard champion={champion} />}
         </For>
       </SortableProvider>
     </div>

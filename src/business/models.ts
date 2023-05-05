@@ -9,12 +9,10 @@ export type Champion = {
 export type Tier = {
   id: string;
   name: string;
-  championPoolId?: string;
-  champions: Champion[];
+  championPoolId: string;
 };
 
 export type ChampionPool = {
   id: string;
   name: string;
-  tiers: Tier[];
 };
