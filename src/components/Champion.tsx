@@ -6,7 +6,7 @@ import { ChampionType } from "../business/entities";
 
 export type Props = JSX.InsHTMLAttributes<HTMLDivElement> & {
   champion?: ChampionType | null;
-  search?: string;
+  search?: string | null;
 };
 
 export const ChampionCardStyled = styled.div`
@@ -30,6 +30,10 @@ export const Champion = (props: Props) => {
           props.class || ""
         } group cursor-pointer relative sortable transition-all rounded-lg`}
         id={`${props.champion?.key}-card`}
+        onClick={(e) => {
+          console.log(props);
+          props.onClick && props.onClick(e);
+        }}
       >
         <div
           class={`image border border-white/20 rounded-lg ${

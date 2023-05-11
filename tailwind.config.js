@@ -8,6 +8,7 @@ module.exports = {
           100: "#b3b4d0",
         },
         purple: {
+          primary: "#151136",
           900: "#342b5b",
           800: "#382f66",
         },

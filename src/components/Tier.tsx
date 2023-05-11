@@ -1,15 +1,17 @@
-import { For, JSX, createSignal, Ref } from "solid-js";
-import { TierType } from "../business/entities";
+import { dndzone } from "solid-dnd-directive";
+import { For, JSX, createSignal, Ref, onCleanup, createEffect } from "solid-js";
+import { ChampionType, TierType } from "../business/entities";
 import Champion from "./Champion";
-import { getChampions } from "../store";
+import { getChampions, setChampionTiers } from "../store";
 import { styled } from "solid-styled-components";
 import { clickOutside } from "../bindings";
+import { getChampionTiers } from "../store";
 
-export type Props = {
+export type Props = JSX.InsHTMLAttributes<HTMLDivElement> & {
   tier?: TierType;
   children?: JSX.Element;
-  championsIds?: string[];
   onCreateTier?: (tierName: string) => void;
+  onClick?: (e: any) => void;
 };
 
 export const StyledTier = styled.div`
@@ -25,8 +27,7 @@ export const StyledTier = styled.div`
 `;
 
 export const Tier = (props: Props) => {
-  const championsIds = props.championsIds || [];
-
+  const [getTierChampions, setTierChampions] = createSignal<ChampionType[]>([]);
   const [getCreate, setCreate] = createSignal(false);
 
   let createTierNameInputRef: HTMLInputElement;
@@ -47,23 +48,48 @@ export const Tier = (props: Props) => {
       "border-dashed p-8 border-white/10 bg-purple-900/10 flex justify-center items-center") ||
     "";
 
+  createEffect(() => console.log(getChampionTiers()));
+  createEffect(() => {
+    setTierChampions((props.tier && getChampionTiers()[props.tier!.id]) || []);
+  });
+
+  function handleDndColumnsSorted(e: any) {
+    const tier = props.tier!;
+    const items: ChampionType[] = e.detail.items;
+
+    setChampionTiers((tiers) => {
+      const championsToAdd: ChampionType[] = items.filter(
+        (c) =>
+          !(tiers[tier.id] || []).some(
+            (_c) => c.id === _c.id || c.id === "id:dnd-shadow-placeholder-0000"
+          )
+      );
+
+      return {
+        ...tiers,
+        [tier.id]: items,
+      };
+    });
+  }
+
   return (
     <StyledTier
-      class={
-        "bg-purple-900 border border-purple-800 hover:border-gold drop-shadow hover:drop-shadow-white rounded-lg cursor-pointer transition-all " +
-        createTierClasses
-      }
-      onClick={() => {
+      class={`bg-purple-900 border border-purple-800 hover:border-gold drop-shadow hover:drop-shadow-white rounded-lg cursor-pointer transition-all ${createTierClasses} ${
+        props.class || ""
+      }`}
+      onClick={(e) => {
         if (!props.tier) {
           setCreate(true);
           createTierNameInputRef.focus();
+          return;
         }
+        props.onClick && props.onClick(e);
       }}
-      ref={(ref) =>
+      ref={(ref) => {
         clickOutside(ref, () => {
           setCreate(false);
-        })
-      }
+        });
+      }}
     >
       {props.tier && (
         <>
@@ -71,14 +97,32 @@ export const Tier = (props: Props) => {
             {props.tier.name}
           </div>
           <div
-            class={`p-4 flex flex-nowrap gap-2 overflow-hidden ${
-              !championsIds.length && "items-center justify-center"
+            class={`p-4 flex flex-nowrap gap-2 overflow-hidden overflow-x-auto ${
+              !getTierChampions().length && "items-center justify-center"
             }`}
+            ref={(ref) => {
+              dndzone(ref, () => ({
+                items: () => getTierChampions(),
+                type: "column",
+              }));
+              ref.addEventListener("consider", handleDndColumnsSorted, false);
+              ref.addEventListener("finalize", handleDndColumnsSorted, false);
+              onCleanup(() => {
+                ref.removeEventListener(
+                  "consider",
+                  handleDndColumnsSorted,
+                  false
+                );
+                ref.removeEventListener(
+                  "finalize",
+                  handleDndColumnsSorted,
+                  false
+                );
+              });
+            }}
           >
-            <For each={championsIds} fallback={<Champion />}>
-              {(championId) => (
-                <Champion champion={getChampions()[championId]} />
-              )}
+            <For each={getTierChampions()} fallback={<Champion />}>
+              {(champion) => <Champion champion={champion} />}
             </For>
           </div>
         </>

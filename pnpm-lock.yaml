@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  solid-dnd-directive:
+    specifier: ^0.2.0
+    version: 0.2.0(solid-js@1.6.10)
   solid-js:
     specifier: ^1.6.10
     version: 1.6.10
@@ -1303,6 +1306,16 @@ packages:
     hasBin: true
     dev: true
 
+  /solid-dnd-directive@0.2.0(solid-js@1.6.10):
+    resolution: {integrity: sha512-4aPKidTrwSVBHqeiUPPe218t+HyRp0S4iYNJw7nDsWqP33HHYhAwvAyWVfqlqHBlnA/+A5jdevRvbCOiLV5Qew==}
+    engines: {node: '>=14.16.0', npm: '>=6.14.8'}
+    peerDependencies:
+      solid-js: ^1.0.0
+    dependencies:
+      solid-js: 1.6.10
+      svelte-dnd-action: 0.9.11
+    dev: false
+
   /solid-js@1.6.10:
     resolution: {integrity: sha512-Sf0e6PQCEFkFtbPq0L+93Ua81YQOefBEbvDJ0YXT92b6Lzw0k7UvzSd2l1BbYM+yzE3UmepU1tyMDc/3nIByjA==}
     dependencies:
@@ -1359,6 +1372,10 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
     dev: true
+
+  /svelte-dnd-action@0.9.11:
+    resolution: {integrity: sha512-hkuBs8rT0yVD0Xq9p9GxeHN1zYD8r7oZO872VQHg7DJe3cAYwus4WXpx3DNYZiTcLcIOmDw3BVNdKvAl/B6VPg==}
+    dev: false
 
   /tailwindcss@3.3.2:
     resolution: {integrity: sha512-9jPkMiIBXvPc2KywkraqsUfbfj+dHDb+JPWtSJa9MLFdrPyazI7q6WX2sUrm7R9eVR7qqv3Pas7EvQFzxKnI6w==}
