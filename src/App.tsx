@@ -1,12 +1,15 @@
 import AvailableChampions from "./features/AvailableChampions";
-import ListChampionPools from "./features/ListChampionPools";
+import TierList from "./features/TierList";
 
 const App = () => {
   return (
-    <div class="lg:py-12 lg:px-24 p-2">
-      <ListChampionPools />
-      <AvailableChampions />
-    </div>
+    <>
+      <div class="p-4 max-w-screen-xl m-auto grid grid-rows-2">
+        <div class="w-full">
+          <TierList />
+        </div>
+      </div>
+    </>
   );
 };
 
